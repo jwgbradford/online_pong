@@ -9,20 +9,23 @@ class MyScreen:
         height = 500
         self.win = pygame.display.set_mode((width, height))
         pygame.display.set_caption("Online Pong")
-        self.game_objects = self.add_objects(width, height)
+        self.bat_image = self.make_bat()
+        self.ball_image = self.make_ball()
 
-    def redraw_window(self):
-        for obj in self.game_objects:
-            screen_object = self.game_objects[obj]
-            self.win.blit(screen_object['image'], screen_object['pos'])
+    def redraw_window(self, new_data, my_id):
+        self.win.fill((0, 0, 0))
+        if new_data != {}:
+            for obj in new_data:
+                if obj == 'ball':
+                    self.win.blit(self.ball_image, new_data[obj])
+                elif obj == my_id:
+                    pos = (10, new_data[obj])
+                    self.win.blit(self.ball_image, pos)
+                elif isinstance(obj, int):
+                    pos = (470, new_data[obj])
+                    self.win.blit(self.ball_image, pos)
+
         pygame.display.flip()
-
-    def add_objects(self, w, h):
-        game_objects = {}
-        game_objects['ball'] = {'image' : self.make_ball, 'pos' : (w / 2, h / 2)}
-        game_objects['p1'] = {'image' : self.make_bat, 'pos' : (10, h / 2)}
-        game_objects['p2'] = {'image' : self.make_bat, 'pos' : (470, h / 2)}
-        return game_objects
 
     def make_bat(self):
         image = pygame.Surface((20, 50))

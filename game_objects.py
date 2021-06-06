@@ -12,6 +12,7 @@ class Player():
 
     def move(self, keys):
         if keys[K_UP]:
+            print('go up')
             self.y -= self.vel
             if self.y < 5:
                 self.y = 5
