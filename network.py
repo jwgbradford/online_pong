@@ -1,5 +1,4 @@
-import socket
-import pickle
+import socket, json
 
 class Network:
     def __init__(self):
@@ -11,12 +10,12 @@ class Network:
 
     def send(self, data):
         try:
-            self.client.send(pickle.dumps(data))
+            self.client.send(json.dumps(data))
         except socket.error as e:
             print('Send error', e)
     
     def receive(self):
         try:
-            return pickle.loads(self.client.recv(4096))
+            return json.loads(self.client.recv(4096))
         except socket.error as e:
             print('Receive error', e)

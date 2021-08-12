@@ -5,14 +5,12 @@ import pong_constants as pc
 
 class MyScreen:
     def __init__(self):
-        width = 500
-        height = 500
-        self.win = pygame.display.set_mode((width, height))
+        self.win = pygame.display.set_mode((pc.WIDTH, pc.HEIGHT))
         pygame.display.set_caption("Online Pong")
         self.bat_image = self.make_bat()
         self.ball_image = self.make_ball()
 
-    def redraw_window(self, new_data, my_id):
+    def redraw_window(self, new_data, my_id): # needs check for json data parsing
         self.win.fill((0, 0, 0))
         if new_data != {}:
             for obj in new_data:
@@ -24,7 +22,6 @@ class MyScreen:
                 elif isinstance(obj, int):
                     pos = (470, new_data[obj])
                     self.win.blit(self.ball_image, pos)
-
         pygame.display.flip()
 
     def make_bat(self):

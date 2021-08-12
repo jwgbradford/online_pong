@@ -11,7 +11,7 @@ class Player():
         self.pos = (self.x, self.y)
 
     def move(self, keys):
-        if keys[K_UP]:
+        if keys[K_UP]: # only works if passing pickles, we're passing json
             print('go up')
             self.y -= self.vel
             if self.y < 5:

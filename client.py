@@ -12,7 +12,7 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
-        keys = pygame.key.get_pressed()
+        keys = pygame.key.get_pressed() # may need to parse this to send key values by json
         n.send(keys)
         new_data = n.receive()
         my_screen.redraw_window(new_data, my_id)
