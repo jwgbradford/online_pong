@@ -13,12 +13,14 @@ class MyScreen:
 
     def redraw_window(self, recv_data, my_id): # needs check for json data parsing
         self.win.fill((0, 0, 0))
-        ball_pos = (recv_data[0]["pos_x"], recv_data[0]["pos_y"])
-        self.win.blit(self.ball_image, ball_pos)
         if my_id == 1:
             other_id = 2
+            ball_x = recv_data[0]["pos_x"]
         else:
             other_id = 1
+            ball_x = recv_data[0]["pos_x"] * -1
+        ball_pos = (ball_x, recv_data[0]["pos_y"])
+        self.win.blit(self.ball_image, ball_pos)
         my_pos = (10, recv_data[my_id]["pos_y"])
         self.win.blit(self.bat_image, my_pos)
         other_pos = (470, recv_data[other_id]["pos_y"])
