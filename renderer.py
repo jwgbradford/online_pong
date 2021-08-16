@@ -9,19 +9,21 @@ class MyScreen:
         pygame.display.set_caption("Online Pong")
         self.bat_image = self.make_bat()
         self.ball_image = self.make_ball()
+        self.clock = pygame.time.Clock()
 
-    def redraw_window(self, new_data, my_id): # needs check for json data parsing
+    def redraw_window(self, recv_data, my_id): # needs check for json data parsing
         self.win.fill((0, 0, 0))
-        if new_data != {}:
-            for obj in new_data:
-                if obj == 'ball':
-                    self.win.blit(self.ball_image, new_data[obj])
-                elif obj == my_id:
-                    pos = (10, new_data[obj])
-                    self.win.blit(self.ball_image, pos)
-                elif isinstance(obj, int):
-                    pos = (470, new_data[obj])
-                    self.win.blit(self.ball_image, pos)
+        ball_pos = (recv_data[0]["pos_x"], recv_data[0]["pos_y"])
+        self.win.blit(self.ball_image, ball_pos)
+        if my_id == 1:
+            other_id = 2
+        else:
+            other_id = 1
+        my_pos = (10, recv_data[my_id]["pos_y"])
+        self.win.blit(self.bat_image, my_pos)
+        other_pos = (470, recv_data[other_id]["pos_y"])
+        self.win.blit(self.bat_image, other_pos)
+        self.clock.tick(60)
         pygame.display.flip()
 
     def make_bat(self):

@@ -10,13 +10,13 @@ class Player():
         self.vel = 3
         self.pos = (self.x, self.y)
 
-    def move(self, keys):
-        if keys[K_UP]: # only works if passing pickles, we're passing json
+    def move(self, data):
+        if data['move'] == 'up': # only works if passing pickles, we're passing json
             print('go up')
             self.y -= self.vel
             if self.y < 5:
                 self.y = 5
-        if keys[K_DOWN]:
+        if data['move'] == 'down':
             self.y += self.vel
             if self.y > 495:
                 self.y = 495
@@ -31,7 +31,7 @@ class Ball():
         self.y = 250
         self.x = 250
         self.vel = 3
-        self.dir = randint(0, 360) * (math.pi / 180)
+        self.dir = randint(45, 125) * (math.pi / 180)
         self.dx = self.vel * math.sin(self.dir)
         self.dy = self.vel * math.cos(self.dir)
 

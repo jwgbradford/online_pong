@@ -1,0 +1,38 @@
+# send to clients
+
+{
+    "msg_id" : 1234,
+    "msg" : "setup",
+    "player_id" : 1
+}
+
+{
+    "msg_id" : 1234,
+    "msg" : "playing",
+    "items" : [
+        {
+            "item" : "ball",
+            "pos_x" : 0,
+            "pos_y" : 0
+        },
+        {
+            "item" : "p1",
+            "pos_y" : 0
+        },
+        {
+            "item": "p2",
+            "pos_y" : 0
+            }
+    ]
+}
+
+# send to server
+
+{
+    "player_id" : 1,
+    "msg_id" : 2345,
+    "key_data" : [
+        "up",
+        "space"
+    ]
+}

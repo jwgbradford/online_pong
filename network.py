@@ -3,19 +3,23 @@ import socket, json
 class Network:
     def __init__(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server = "192.168.0.81"
+        self.server = "127.0.0.1" # same laptop
+        #self.server = "192.168.0.81" # home wifi
         self.port = 5555
         self.addr = (self.server, self.port)
         self.client.connect(self.addr)
+        self.byte_length = 2048
 
     def send(self, data):
+        json_data = json.dumps(data)
         try:
-            self.client.send(json.dumps(data))
+            self.client.send(json_data.encode())
         except socket.error as e:
-            print('Send error', e)
-    
+            print(e)
+
     def receive(self):
         try:
-            return json.loads(self.client.recv(4096))
+            return json.loads(self.client.recv(self.byte_length))
         except socket.error as e:
-            print('Receive error', e)
+            print(e)
+            return e             
