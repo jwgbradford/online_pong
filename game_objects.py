@@ -2,16 +2,26 @@ import math
 from pygame import K_UP, K_DOWN
 from random import randint
 
-class Player():
-    def __init__(self, id):
+class GameObject():
+    def __init__(self, id) -> None:
         self.id = id
-        self.y = 230
-        self.x = 0 # we're not interested in the x value but need to pass something
         self.vel = 3
-        self.pos = (self.x, self.y)
+        self.x, self.y = 0, 0
+
+class Player(GameObject):
+    def __init__(self, id) -> None:
+        super().__init__(id)
+        self.x = self.set_x()
+
+    def set_x(self):
+        x = 230
+        if self.id == 1:
+            return x
+        else:
+            return -x
 
     def move(self, data):
-        if data['move'] == 'up': # only works if passing pickles, we're passing json
+        if data['move'] == 'up':
             print('go up')
             self.y -= self.vel
             if self.y < 5:
@@ -20,29 +30,41 @@ class Player():
             self.y += self.vel
             if self.y > 495:
                 self.y = 495
-        self.update()
 
-    def update(self):
-        self.pos = (self.x, self.y)
+    def update(self, data):
+        self.move(data)
+        pos = (self.x, self.y)
+        return pos
 
-class Ball():
-    def __init__(self):
-        self.id = 0
+class Ball(GameObject):
+    def __init__(self, id) -> None:
+        super().__init__(id)
         self.y = 250
         self.x = 250
-        self.vel = 3
         self.dir = randint(45, 125) * (math.pi / 180)
         self.dx = self.vel * math.sin(self.dir)
         self.dy = self.vel * math.cos(self.dir)
 
+    def check_bounce(self, game_data):
+        if self.y < 5:
+            self.dy *= -1
+        elif self.y > 495:
+            self.dy *= -1
+        if self.bat_bounce(game_data):
+            self.dx *= -1
+            self.x += self.dx * 2
+
+    def bat_bounce(self, game_data):
+        if self.x >= 250: # check bounce player 2
+            pass
+        else: # check bounce player 1
+            pass
+
     def move(self):
         self.y += self.dy
         self.x += self.dx
-        if self.x < 5:
-            self.dx *= -1
-        elif self.x > 495:
-            self.x *= -1
-        self.update()
 
     def update(self):
-        self.pos = (self.x, self.y)
+        self.move()
+        pos = (self.x, self.y)
+        return pos

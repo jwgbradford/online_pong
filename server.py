@@ -35,7 +35,7 @@ class PongServer():
         print("Waiting for a connection, Server Started")
 
     def threaded_engine(self):
-        self.game_objects.append(Ball()) # load a ball into the game
+        self.game_objects.append(Ball(0)) # load a ball into the game
         while len(self.game_objects) < 3:
             if len(self.game_objects) == 1:
                 print('waiting for player 1 to join')
@@ -44,35 +44,39 @@ class PongServer():
             time.sleep(0.5)
         while True:
             self.update()
-            time.sleep(0.01)
+            time.sleep(0.016) # or 60 fps
 
     def threaded_player(self, conn, id):
         self.game_objects.append(Player(id))
         msg_index = 0
-        self.input_buffer[id] = {
-            "id" : id,
-            "msg_index" : msg_index,
-            "status" : "joined",
-            "pos" : self.game_objects[id].pos}
-        json_data = json.dumps(self.input_buffer)
+        first_send = {
+            "msg_id" : msg_index,
+            "msg" : "setup",
+            "player_id" : id
+        }
+        json_data = json.dumps(first_send)
         conn.send(json_data.encode())
         while True:
             try:
-                received_data = json.loads(conn.recv(self.byte_length))
+                recv_data = json.loads(conn.recv(self.byte_length))
             except:
                 break
-            if not received_data:
+            if not recv_data:
                 print("Disconnected")
                 break
-            self.game_objects[id].move(received_data)
+            if recv_data['msg'] == 'playing':
+                self.input_buffer[id] = (recv_data)
             json_data = json.dumps(self.output_buffer)
             conn.send(json_data.encode())
         print("Lost connection")
         conn.close()
 
     def update(self):
-        for element in self.game_objects:
-            element.update()
+        for index, element in enumerate(self.game_objects):
+            if index == 0: # first check if the ball, and needs to bounce
+                element.check_bounce(self.output_buffer)
+            outputdata = element.update(self.input_buffer[index])
+            self.output_buffer[outputdata["id"]] = outputdata
 
     def add_player(self, id):
         self.game_objects[id] = Player(id)
