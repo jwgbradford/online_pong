@@ -1,5 +1,5 @@
-import math
-from pygame import K_UP, K_DOWN
+import math, pygame, json
+from threading import Thread
 from random import randint
 
 class GameObject():
@@ -68,3 +68,59 @@ class Ball(GameObject):
         self.move()
         pos = (self.x, self.y)
         return pos
+
+class Engine():
+    def __init__(self) -> None:
+        self.game_objects = []
+        self.output_buffer = {}
+        self.input_buffer = {}
+
+    def run(self):
+        pygame.init()
+        self.game_objects.append(Ball(0)) # load a ball into the game
+        clock = pygame.time.Clock()
+        while len(self.game_objects) < 3:
+            if len(self.game_objects) == 1:
+                print('waiting for player 1 to join')
+            else:
+                print('Waiting for player 2 to join')
+            clock.tick(1)
+        while True:
+            self.update()
+            clock.tick(60)
+
+    def new_player(self, conn, player_number):
+        self.game_objects.append(Player(player_number))
+        connected_player = Thread(target=self.threaded_player, args=(conn, player_number))
+        connected_player.start()
+
+    def update(self):
+        for index, element in enumerate(self.game_objects):
+            if index == 0: # first check if the ball, and needs to bounce
+                element.check_bounce(self.output_buffer)
+            outputdata = element.update(self.input_buffer[index])
+            self.output_buffer[outputdata["id"]] = outputdata
+
+    def threaded_player(self, conn, id):
+        msg_index = 0
+        first_send = {
+            "msg_id" : msg_index,
+            "msg" : "setup",
+            "player_id" : id
+        }
+        json_data = json.dumps(first_send)
+        conn.send(json_data.encode())
+        while True:
+            try:
+                recv_data = json.loads(conn.recv(self.byte_length))
+            except:
+                break
+            if not recv_data:
+                print("Disconnected")
+                break
+            if recv_data['msg'] == 'playing':
+                self.input_buffer[id] = (recv_data)
+            json_data = json.dumps(self.output_buffer)
+            conn.send(json_data.encode())
+        print("Lost connection")
+        conn.close()
