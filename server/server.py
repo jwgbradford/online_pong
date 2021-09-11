@@ -30,9 +30,6 @@ class PongServer():
         self.server_socket.listen()
         print("Waiting for a connection, Server Started")
 
-    def add_player(self, id):
-        self.game_objects[id] = Player(id)
-
 if __name__ == '__main__':
     pong_server = PongServer()
     pong_server.run()

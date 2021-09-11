@@ -1,11 +1,10 @@
 # check I still need all functions / methods
 
 import pygame
-import pong_constants as pc
 
 class MyScreen:
-    def __init__(self):
-        self.win = pygame.display.set_mode((pc.WIDTH, pc.HEIGHT))
+    def __init__(self, screen_size):
+        self.win = pygame.display.set_mode(screen_size)
         pygame.display.set_caption("Online Pong")
         self.bat_image = self.make_bat()
         self.ball_image = self.make_ball()

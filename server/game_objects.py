@@ -1,6 +1,7 @@
 import math, pygame, json
 from threading import Thread
 from random import randint
+from pong_constants import WIDTH, HEIGHT
 
 class GameObject():
     def __init__(self, id) -> None:
@@ -106,7 +107,10 @@ class Engine():
         first_send = {
             "msg_id" : msg_index,
             "msg" : "setup",
-            "player_id" : id
+            "player_id" : id,
+            "data" : {
+                "height" : HEIGHT,
+                "width" : WIDTH}
         }
         json_data = json.dumps(first_send)
         conn.send(json_data.encode())
